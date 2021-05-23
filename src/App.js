@@ -1,14 +1,8 @@
-import React from 'react'
-import {
-  BrowserRouter as Router,
-  Switch,
-  Route,
-  Link
-} from "react-router-dom";
-import Home from './screens/Home'
-import Register from './screens/Register'
-import { createGlobalStyle } from 'styled-components'
-
+import React from "react";
+import { BrowserRouter as Router, Switch, Route, Link } from "react-router-dom";
+import Home from "./screens/Home";
+import Register from "./screens/Register";
+import { createGlobalStyle } from "styled-components";
 
 const GlobalStyle = createGlobalStyle`
   * {
@@ -20,23 +14,27 @@ const GlobalStyle = createGlobalStyle`
     font-family: "Roboto";
     src: url('https://fonts.googleapis.com/css2?family=Roboto:wght@500&display=swap');
   }
-  `
+  @font-face {
+    font-family: "Teste";
+    src: url('https://fonts.googleapis.com/css2?family=Chela+One&display=swap');
+  }
+  `;
 
 function App() {
   return (
     <>
-    <GlobalStyle />
-    <Router>
-      <Switch>
-        <Route exact path="/">
-          <Home />
-        </Route>
-        <Route exact path="/register">
-          <Register />
-        </Route>
-      </Switch>
-    </Router>
-   </>
+      <GlobalStyle />
+      <Router>
+        <Switch>
+          <Route exact path="/">
+            <Home />
+          </Route>
+          <Route exact path="/register">
+            <Register />
+          </Route>
+        </Switch>
+      </Router>
+    </>
   );
 }
 
