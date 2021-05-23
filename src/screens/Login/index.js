@@ -24,7 +24,7 @@ import firebase, { firestore } from "../../api/firebaseConfig";
 import CryptoJS from 'crypto-js'
 import dotenvJSON from '../../utils/dotenv.json'
 import Animate from "animate-css-styled-components/lib/Animate";
-function Register() {
+function Login() {
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -34,70 +34,30 @@ function Register() {
   const [passwordError, setPasswordError] = useState(null);
   const [confirmPasswordError, setConfirmPasswordError] = useState(null);
   const [seePassword, setSeePassword] = useState(false)
-  const [seeConfirmPassword, setConfirmSeePassword] = useState(false)
 
-  const verifyFields = () => {
-
-    if (!name) return setNameError("*Este campo não pode ser vazio");
-    setNameError(null);
-    if (!email) return setEmailError("*Este campo não pode ser vazio");
-    setEmailError(null);
-    if (!password) return setPasswordError("*Este campo não pode ser vazio");
-    setPasswordError(null);
-    if (password.length < 8) {
-      return setPasswordError("*Digite mais de 8 carácteres");
-    }
-    setPasswordError(null);
-
-    if (!confirmPassword) {
-      return setConfirmPasswordError("*Este campo não pode ser vazio");
-    }
-    setConfirmPasswordError(null);
-    if (name < 3) {
-      return setNameError("*Este campo não pode ter menos de 3 carácteres");
-    }
-    setNameError(null);
-
-    if (password !== confirmPassword) {
-      return setConfirmPasswordError("*Senhas diferentes");
-    }
-
-    setConfirmPasswordError(null);
-
-    return true;
-  };
-
-  const createUser = async () => {
+  const login = async () => {
+      console.log('oi')
     firebase
       .auth()
-      .createUserWithEmailAndPassword(email, password)
-      .then(async (response) => {
-        setEmailError(null);
-        setPasswordError(null);
-        const userCollection = firestore.collection("users");
-        const hash = CryptoJS.AES.encrypt(password, dotenvJSON.CRYPTO_KEY).toString();
-        console.log(hash)
-        userCollection.doc(response.user.uid).set({
-          name: name,
-          email: response.user.email,
-          password: hash
-        });
+      .signInWithEmailAndPassword(email, password)
+      .then(response => {
+        setEmailError(null)
+        setPasswordError(null)
         localStorage.setItem('auth-token', generateToken({id: response.user.uid}))
         window.location.href = '/dashboard'
       })
-      .catch((err) => {
+      .catch(err => {
         switch (err.code) {
-          case "auth/email-already-in-use":
-            return setEmailError("*Email não disponivel");
-            break;
-          case "auth/invalid-email":
-            return setEmailError("*Email inválido");
-            break;
-          case "auth/weak-password":
-            return setPasswordError("*Senha muito fraca");
-            break;
+          case 'auth/invalid-email':
+          case 'auth/user-disable':
+          case 'auth/user-not-found':
+            setEmailError('*Email não encontrado')
+            break
+          case 'auth/wrong-password':
+            setPasswordError('*Senha errada')
+            break
         }
-      });
+      })
   };
 
   return (
@@ -113,26 +73,12 @@ function Register() {
         <Animate Animation={[BounceInDown]}  duration="0.8s" delay="0s" className='Wobble'>
           <Modal>
             <Center>
-              <Title>Registrar</Title>
+              <Title>Login</Title>
             </Center>
 
             <Animate Animation={[BounceInLeft]}  duration="0.8s" delay="0.5s" className='Wobble'>
               <Form>
-                <Center>
-                  <Name>
-                    <p className="error-message">{nameError}</p>
-                  <div className='container-input'>
-                    <span className="container-icon">
-                      <AiOutlineUser />
-                    </span>
-                  <TextField
-                      value={name}
-                      onChange={(e) => setName(e.target.value)}
-                      label="Nome"
-                    />
-                  </div>
-                  </Name>
-                </Center>
+               
                 <Center>
                   <Email>
                     <p className="error-message">{emailError}</p>
@@ -166,33 +112,16 @@ function Register() {
                   </Password>
                 </Center>
                 <Center>
-                  <ConfirmPassword>
-                    <p className="error-message">{confirmPasswordError}</p>
-                    <div className='container-input'>
-                    <span className="container-icon">
-                      <FiKey/>
-                    </span>
-                    <TextField
-                      value={confirmPassword}
-                      label="Repita sua Senha"
-                      onChange={(e) => setConfirmPassword(e.target.value)}
-                      type={seeConfirmPassword ? "text": "password"}
-                    />
-                    </div>
-                  </ConfirmPassword>
-                </Center>
-                <Center>
                   <ButtonSend
                     onClick={() => {
-                      if (verifyFields() !== true) return;
-                      createUser();
+                      login();
                     }}
                   >
-                    Registrar
+                    Login
                   </ButtonSend>
                 </Center>
                 <Center>
-                  <a href='/login'>Já possui uma conta ? </a>
+                  <a href='/register'>Não possui uma conta ? </a>
                 </Center>
               </Form>
             </Animate>
@@ -203,4 +132,4 @@ function Register() {
   );
 }
 
-export default Register;
+export default Login;
