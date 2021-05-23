@@ -9,4 +9,4 @@ function Home() {
   );
 }
 
-export default screens;
+export default Home;
