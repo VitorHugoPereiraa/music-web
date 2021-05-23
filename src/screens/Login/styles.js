@@ -9,13 +9,13 @@ export const Container = styled.div`
   display: flex;
   justify-content: center;
   align-items: center;
+  flex-direction: column;
   .Wobble{
     width: 100%;
     display: flex;
     justify-content: center;
     align-items: center;
     z-index: 2;
-
 }
 .animate{
   z-index: 2;
@@ -50,11 +50,15 @@ export const Container = styled.div`
 
 export const Modal = styled.div`
   width: 42%;
-  height: 75%;
+  height: 70vh;
   background-color: white;
   border-radius: 20px;
   padding: 20px;
   font-family: "Roboto";
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
   @media(max-width: 360px) {
     width: 90%;
     height: 90%;
